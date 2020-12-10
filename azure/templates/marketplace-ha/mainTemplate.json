@@ -604,7 +604,7 @@
         "[resourceId('Microsoft.Network/publicipprefixes',variables('ipPrefixName'))]"
       ],
       "location": "[variables('location')]",
-      "name": "[concat('pip-', parameters('vmName'),'0', copyIndex(1), '-weeu-prod-00', copyIndex(1))]",
+      "name": "[concat('pip-', parameters('vmName'),'0', copyIndex(1), '-weeu-prod-001')]",
       "sku": {
         "name": "Standard"
       },
@@ -653,7 +653,7 @@
       "dependsOn": [
         "[coalesce(resourceId('Microsoft.Resources/deployments', 'networkNewSetup'), resourceId('Microsoft.Resources/deployments', 'networkExistingSetup'))]",
         "[variables('elbId')]",
-        "[variables('gwPublicIPIds')[0]]",
+        "publicAddressCopy",
         "[variables('haPublicIPId')]"
       ],
       "location": "[variables('location')]",
@@ -708,7 +708,7 @@
       "dependsOn": [
         "[coalesce(resourceId('Microsoft.Resources/deployments', 'networkNewSetup'), resourceId('Microsoft.Resources/deployments', 'networkExistingSetup'))]",
         "[variables('elbId')]",
-        "[variables('gwPublicIPIds')[1]]"
+        "publicAddressCopy"
       ],
       "location": "[variables('location')]",
       "name": "[concat('nic-', parameters('vmName'),'02-', variables('nic1Name'), '-weeu-prod-001')]",
@@ -926,12 +926,12 @@
         "count": "[variables('count')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), copyIndex(1)))]"
+        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), '0', copyIndex(1)))]"
       ],
       "properties": {
         "roleDefinitionId": "[variables('roleDefinitionId')]",
         "scope": "[resourceGroup().id]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), copyIndex(1))), '2018-10-01', 'Full').identity.principalId]"
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'),'0', copyIndex(1))), '2018-10-01', 'Full').identity.principalId]"
       },
       "tags": {
         "provider": "[toUpper(parameters('Check_PointTags').provider)]"
@@ -1005,29 +1005,6 @@
     }
   ],
   "outputs": {
-    "HaIPAddr": {
-      "type": "string",
-      "value": "[reference(variables('haPublicIPId')).IpAddress]"
-    },
-    "HaFQDN": {
-      "type": "string",
-      "value": "[reference(variables('haPublicIPId')).dnsSettings.fqdn]"
-    },
-    "Member1IPAddr": {
-      "type": "string",
-      "value": "[reference(variables('gwPublicIPIds')[0]).IpAddress]"
-    },
-    "Member1FQDN": {
-      "type": "string",
-      "value": "[reference(variables('gwPublicIPIds')[0]).dnsSettings.fqdn]"
-    },
-    "Member2IPAddr": {
-      "type": "string",
-      "value": "[reference(variables('gwPublicIPIds')[1]).IpAddress]"
-    },
-    "Member2FQDN": {
-      "type": "string",
-      "value": "[reference(variables('gwPublicIPIds')[1]).dnsSettings.fqdn]"
-    }
+
   }
 }
