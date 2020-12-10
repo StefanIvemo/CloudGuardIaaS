@@ -60,6 +60,8 @@
     }
   },
   "variables": {
+    "route1name":"rtt-snetfrontend-weeu-prod-001",
+    "route2name":"rtt-snetbackend-weeu-prod-001",
     "copy": [
       {
         "name": "toInternalRoutes",
@@ -83,6 +85,7 @@
       }
     ],
     "routesArray":"[concat(variables('localSubnetRoute'), variables('toInternalRoutes'))]"
+    
   },
   "resources": [
     {
@@ -116,7 +119,7 @@
       "type": "Microsoft.Network/routeTables",
       "apiVersion": "2020-06-01",
       "location": "[parameters('location')]",
-      "name": "[parameters('Subnet1Name')]",
+      "name": "[variables('route1name')]",
       "properties": {
         "routes": "[variables('routesArray')]"
             },
@@ -128,7 +131,7 @@
       "type": "Microsoft.Network/routeTables",
       "apiVersion": "2020-06-01",
       "location": "[parameters('location')]",
-      "name": "[parameters('Subnet2Name')]",
+      "name": "[variables('route2name')]",
       "properties": {
         "routes": [
           {
@@ -151,8 +154,8 @@
       "name": "[parameters('virtualNetworkName')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]",
-        "[resourceId('Microsoft.Network/routeTables', parameters('Subnet1Name'))]",
-        "[resourceId('Microsoft.Network/routeTables', parameters('Subnet2Name'))]"
+        "[resourceId('Microsoft.Network/routeTables', variables('route1name'))]",
+        "[resourceId('Microsoft.Network/routeTables', variables('route2name'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -167,7 +170,7 @@
               },
               "addressPrefix": "[parameters('Subnet1Prefix')]",
               "routeTable": {
-                "id": "[resourceId('Microsoft.Network/routeTables', parameters('Subnet1Name'))]"
+                "id": "[resourceId('Microsoft.Network/routeTables', variables('route1name'))]"
               }
             }
           },
@@ -176,7 +179,7 @@
             "properties": {
               "addressPrefix": "[parameters('Subnet2Prefix')]",
               "routeTable": {
-                "id": "[resourceId('Microsoft.Network/routeTables', parameters('Subnet2Name'))]"
+                "id": "[resourceId('Microsoft.Network/routeTables', variables('route2name'))]"
               }
             }
           }
