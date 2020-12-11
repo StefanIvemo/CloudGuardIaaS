@@ -424,8 +424,8 @@
     "elbPublicIPId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('elbPublicIPName'))]",
     "haPublicIPId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('haPublicIPName'))]",
     "gwPublicIPIds": [
-      "[resourceId('Microsoft.Network/publicIPAddresses', concat('pip-', parameters('vmName'),'01-weeu-prod-001'))]",
-      "[resourceId('Microsoft.Network/publicIPAddresses', concat('pip-', parameters('vmName'),'02-weeu-prod-001'))]"
+      "[resourceId('Microsoft.Network/publicIPAddresses', concat('pip-', parameters('vmName'),'1-weeu-prod-001'))]",
+      "[resourceId('Microsoft.Network/publicIPAddresses', concat('pip-', parameters('vmName'),'2-weeu-prod-001'))]"
     ],
     "availabilitySetName": "[concat(parameters('vmName'), '-AvailabilitySet')]",
     "count": 2,
@@ -604,7 +604,7 @@
         "[resourceId('Microsoft.Network/publicipprefixes',variables('ipPrefixName'))]"
       ],
       "location": "[variables('location')]",
-      "name": "[concat('pip-', parameters('vmName'),'0', copyIndex(1), '-weeu-prod-001')]",
+      "name": "[concat('pip-', parameters('vmName'), copyIndex(1), '-weeu-prod-001')]",
       "sku": {
         "name": "Standard"
       },
@@ -657,7 +657,7 @@
         "[variables('haPublicIPId')]"
       ],
       "location": "[variables('location')]",
-      "name": "[concat('nic-', parameters('vmName'),'01-', variables('nic1Name'), '-weeu-prod-001')]",
+      "name": "[concat('nic-', parameters('vmName'),'1-', variables('nic1Name'), '-weeu-prod-001')]",
       "properties": {
         "primary": true,
         "enableIPForwarding": true,
@@ -711,7 +711,7 @@
         "publicAddressCopy"
       ],
       "location": "[variables('location')]",
-      "name": "[concat('nic-', parameters('vmName'),'02-', variables('nic1Name'), '-weeu-prod-001')]",
+      "name": "[concat('nic-', parameters('vmName'),'2-', variables('nic1Name'), '-weeu-prod-001')]",
       "properties": {
         "primary": true,
         "enableIPForwarding": true,
@@ -750,7 +750,7 @@
         "[variables('ilbId')]"
       ],
       "location": "[variables('location')]",
-      "name": "[concat('nic-', parameters('vmName'),'0', copyIndex(1), '-', variables('nic2Name'), '-weeu-prod-001')]",
+      "name": "[concat('nic-', parameters('vmName'), copyIndex(1), '-', variables('nic2Name'), '-weeu-prod-001')]",
       "copy": {
         "name": "internalNicCopy",
         "count": "[variables('count')]"
@@ -809,12 +809,12 @@
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'),'0', copyIndex(1), '-', variables('nic1Name'), '-weeu-prod-001'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'),'0', copyIndex(1), '-', variables('nic2Name'), '-weeu-prod-001'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'), copyIndex(1), '-', variables('nic1Name'), '-weeu-prod-001'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'), copyIndex(1), '-', variables('nic2Name'), '-weeu-prod-001'))]",
         "[resourceId('Microsoft.Compute/images/', variables('customImage'))]"
       ],
       "location": "[variables('location')]",
-      "name": "[concat(parameters('vmName'),'0', copyIndex(1))]",
+      "name": "[concat(parameters('vmName'), copyIndex(1))]",
       "zones": "[if(variables('useAZ'), array(copyIndex(1)), json('null'))]",
       "copy": {
         "name": "virtualMachineCopy",
@@ -836,13 +836,13 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'),'0', copyIndex(1), '-', variables('nic1Name'), '-weeu-prod-001'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'), copyIndex(1), '-', variables('nic1Name'), '-weeu-prod-001'))]",
               "properties": {
                 "primary": true
               }
             },
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'),'0', copyIndex(1), '-', variables('nic2Name'), '-weeu-prod-001'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('nic-', parameters('vmName'), copyIndex(1), '-', variables('nic2Name'), '-weeu-prod-001'))]",
               "properties": {
                 "primary": false
               }
@@ -852,7 +852,7 @@
         "osProfile": {
           "adminPassword": "[parameters('adminPassword')]",
           "adminUsername": "[variables('adminUsername')]",
-          "computername": "[concat(toLower(parameters('vmName')),'0' , copyIndex(1))]",
+          "computername": "[concat(toLower(parameters('vmName')), copyIndex(1))]",
           "customData": "[base64(variables('customData'))]",
           "linuxConfiguration": "[variables('linuxConfiguration')]"
         },
@@ -862,7 +862,7 @@
             "caching": "ReadWrite",
             "createOption": "FromImage",
             "diskSizeGB": "[variables('diskSizeGB')]",
-            "name": "[concat('dsk-',parameters('vmName'),'0', copyIndex(1), '-weeu-prod-001')]",
+            "name": "[concat('dsk-',parameters('vmName'), copyIndex(1), '-weeu-prod-001')]",
             "managedDisk": {
               "storageAccountType": "[parameters('diskType')]"
             }
@@ -926,12 +926,12 @@
         "count": "[variables('count')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), '0', copyIndex(1)))]"
+        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), copyIndex(1)))]"
       ],
       "properties": {
         "roleDefinitionId": "[variables('roleDefinitionId')]",
         "scope": "[resourceGroup().id]",
-        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'),'0', copyIndex(1))), '2018-10-01', 'Full').identity.principalId]"
+        "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmName'), copyIndex(1))), '2018-10-01', 'Full').identity.principalId]"
       },
       "tags": {
         "provider": "[toUpper(parameters('Check_PointTags').provider)]"
